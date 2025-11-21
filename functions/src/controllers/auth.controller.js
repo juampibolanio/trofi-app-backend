@@ -1,9 +1,11 @@
+/* eslint-disable max-len */
 const AuthService = require("../services/auth.service");
 const {sendResponse, sendError} = require("../utils/responseHandler");
 const {httpStatusCodes, AuthorizationError, ResourceNotFoundError} = require("../utils/httpStatusCodes");
 
 const admin = require("../../config/firebase");
 
+// registra un usuario
 exports.register = async (req, res) => {
   try {
     const {name, email, password, phoneNumber} = req.body;
@@ -33,6 +35,7 @@ exports.register = async (req, res) => {
   }
 };
 
+// logea un usuario
 exports.login = async (req, res) => {
   try {
     const {email, password} = req.body || {};
@@ -93,6 +96,7 @@ exports.me = async (req, res, next) => {
   }
 };
 
+// cierra sesión
 exports.logout = async (req, res, next) => {
   try {
     const uid = req.user?.uid;
@@ -108,5 +112,31 @@ exports.logout = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+};
+
+// envia correo
+exports.forgotPassword = async (req, res) => {
+  try {
+    const {email} = req.body;
+    await AuthService.sendPasswordResetEmail(email);
+    return sendResponse(res, httpStatusCodes.ok, {
+      message: "Te enviamos un email para reestablecer tu contraseña.",
+    });
+  } catch (error) {
+    return sendError(res, httpStatusCodes.badRequest, error.message);
+  }
+};
+
+// reset de contraseña
+exports.resetPassword = async (req, res) => {
+  try {
+    const {oobCode, newPassword} = req.body;
+    await AuthService.resetPassword(oobCode, newPassword);
+    return sendResponse(res, httpStatusCodes.ok, {
+      message: "Contraseña actualizada correctamente.",
+    });
+  } catch (error) {
+    return sendError(res, httpStatusCodes.badRequest, error.message);
   }
 };

@@ -1,5 +1,4 @@
 const admin = require("../../config/firebase");
-const bcrypt = require("bcrypt");
 const axios = require("axios");
 const {FIREBASE_API_KEY} = require("../../config/environment");
 
@@ -84,6 +83,32 @@ class AuthService {
   async logout(uid) {
     await admin.auth().revokeRefreshTokens(uid);
     return {message: "Sesión cerrada correctamente."};
+  }
+
+  // === ENVIO EMAIL DE RESETEO DE CONTRASEÑA ===
+  async sendPasswordResetEmail(email) {
+    const url =
+      `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${FIREBASE_API_KEY}`;
+
+    const {data} = await axios.post(url, {
+      requestType: "PASSWORD_RESET",
+      email,
+    });
+
+    return data;
+  }
+
+  // === RESETEO DE CONTRASEÑA ===
+  async resetPassword(oobCode, newPassword) {
+    const url =
+      `https://identitytoolkit.googleapis.com/v1/accounts:resetPassword?key=${FIREBASE_API_KEY}`;
+
+    const {data} = await axios.post(url, {
+      oobCode,
+      newPassword,
+    });
+
+    return data;
   }
 }
 
