@@ -1,0 +1,7 @@
+POST http://127.0.0.1:5001/trofi-app-4e947/us-central1/auth/login
+Content-Type: application/json 
+
+{
+  "email": "juanpablo@example.com",
+  "password": "123456"
+}
