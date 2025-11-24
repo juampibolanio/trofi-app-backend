@@ -10,7 +10,7 @@ const functions = require("firebase-functions");
 
 // Apps
 const authApp = require("./src/apps/auth.app");
-const usersApp = require("./src/apps/users.app");
+const usersApp = require("./src/apps/user.app");
 
 // Exportar como funciones independientes
 exports.auth = functions.https.onRequest(authApp);
