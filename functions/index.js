@@ -1,5 +1,6 @@
 process.env.FIREBASE_CONFIG_LOADED = "true";
 
+
 // Cargar entorno
 require("./config/environment");
 
@@ -11,8 +12,9 @@ const functions = require("firebase-functions");
 // Apps
 const authApp = require("./src/apps/auth.app");
 const usersApp = require("./src/apps/user.app");
+// importar job.app
 
 // Exportar como funciones independientes
 exports.auth = functions.https.onRequest(authApp);
-exports.users = functions.https.onRequest(usersApp);
+//exports.users = functions.https.onRequest(usersApp);
 
