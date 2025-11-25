@@ -1,92 +1,108 @@
+/* eslint-disable valid-jsdoc */
+/* eslint-disable max-len */
 const JobsService = require("../services/jobs.service");
-const {sendResponse, sendError} = require("../utils/responseHandler");
+const {sendResponse} = require("../utils/responseHandler");
+const BaseError = require("../errors/BaseError");
+const DataValidationError = require("../errors/DataValidationError");
+const ResourceNotFoundError = require("../errors/ResourceNotFoundError");
+const ConflictError = require("../errors/ConflictError");
+const DatabaseError = require("../errors/DatabaseError");
 const {httpStatusCodes} = require("../utils/httpStatusCodes");
 
-// --------- OBTENER TODOS LOS TRABAJOS -------
+/**
+ * Obtiene todos los trabajos.
+ */
 exports.getAllJobs = async (req, res, next) => {
   try {
     const trabajos = await JobsService.getAllJobs();
-
-    return sendResponse(res, httpStatusCodes.ok, {
-      success: true,
-      trabajos,
-    });
-  } catch (error) {
-    next(error);
+    return sendResponse(res, httpStatusCodes.ok, trabajos, "Lista de trabajos obtenida correctamente");
+  } catch (err) {
+    next(err instanceof BaseError ? err : new DatabaseError());
   }
 };
 
-// ---------OBTENER UN TRABAJO POR ID--------
+/**
+ * Obtiene un trabajo por su ID.
+ */
 exports.getJobById = async (req, res, next) => {
   try {
     const {id} = req.params;
+    if (!id) throw new DataValidationError("ID del trabajo requerido");
     const trabajo = await JobsService.getJobById(id);
-
-    return sendResponse(res, httpStatusCodes.ok, {
-      success: true,
-      trabajo,
-    });
-  } catch (error) {
-    if (error.message.includes("requerido") || error.message.includes("no encontrado")) {
-      return sendError(res, httpStatusCodes.badRequest, error.message);
-    }
-    next(error);
+    return sendResponse(res, httpStatusCodes.ok, trabajo, "Trabajo obtenido correctamente");
+  } catch (err) {
+    next(
+      err instanceof DataValidationError ||
+      err instanceof ResourceNotFoundError ||
+      err instanceof BaseError ?
+        err :
+        new DatabaseError(),
+    );
   }
 };
 
-// ------- CREAR UN NUEVO TRABAJO -------------
+/**
+ * Crea un nuevo trabajo.
+ */
 exports.createJob = async (req, res, next) => {
   try {
     const {name} = req.body;
+    if (!name) throw new DataValidationError("Nombre del trabajo requerido");
     const trabajo = await JobsService.createJob(name);
-
-    return sendResponse(res, httpStatusCodes.created, {
-      success: true,
-      message: "Trabajo creado correctamente.",
-      trabajo,
-    });
-  } catch (error) {
-    if (error.message.includes("requerido") || error.message.includes("ya existe")) {
-      return sendError(res, httpStatusCodes.badRequest, error.message);
-    }
-    next(error);
+    return sendResponse(res, httpStatusCodes.created, trabajo, "Trabajo creado correctamente");
+  } catch (err) {
+    next(
+      err instanceof DataValidationError ||
+      err instanceof ConflictError ||
+      err instanceof BaseError ?
+        err :
+        new DatabaseError(),
+    );
   }
 };
 
-// -------- ACTUALIZAR UN TRABAJO -------------
+/**
+ * Actualiza un trabajo por ID.
+ */
 exports.updateJob = async (req, res, next) => {
   try {
     const {id} = req.params;
     const {name} = req.body;
-    const trabajo = await JobsService.updateJob(id, name);
+    if (!id) throw new DataValidationError("ID del trabajo requerido");
+    if (!name) throw new DataValidationError("Nombre del trabajo requerido");
 
-    return sendResponse(res, httpStatusCodes.ok, {
-      success: true,
-      message: "Trabajo actualizado correctamente.",
-      trabajo,
-    });
-  } catch (error) {
-    if (error.message.includes("requerido") || error.message.includes("no encontrado") || error.message.includes("ya existe")) {
-      return sendError(res, httpStatusCodes.badRequest, error.message);
-    }
-    next(error);
+    const trabajo = await JobsService.updateJob(id, name);
+    return sendResponse(res, httpStatusCodes.ok, trabajo, "Trabajo actualizado correctamente");
+  } catch (err) {
+    next(
+      err instanceof DataValidationError ||
+      err instanceof ConflictError ||
+      err instanceof ResourceNotFoundError ||
+      err instanceof BaseError ?
+        err :
+        new DatabaseError(),
+    );
   }
 };
 
-// ---------- ELIMINAR UN TRABAJO --------------
+/**
+ * Elimina un trabajo por ID.
+ */
 exports.deleteJob = async (req, res, next) => {
   try {
     const {id} = req.params;
-    const resultado = await JobsService.deleteJob(id);
+    if (!id) throw new DataValidationError("ID del trabajo requerido");
 
-    return sendResponse(res, httpStatusCodes.ok, {
-      success: true,
-      ...resultado,
-    });
-  } catch (error) {
-    if (error.message.includes("requerido") || error.message.includes("no encontrado") || error.message.includes("usuarios asociados")) {
-      return sendError(res, httpStatusCodes.badRequest, error.message);
-    }
-    next(error);
+    const resultado = await JobsService.deleteJob(id);
+    return sendResponse(res, httpStatusCodes.ok, resultado, "Trabajo eliminado correctamente");
+  } catch (err) {
+    next(
+      err instanceof DataValidationError ||
+      err instanceof ConflictError ||
+      err instanceof ResourceNotFoundError ||
+      err instanceof BaseError ?
+        err :
+        new DatabaseError(),
+    );
   }
 };
