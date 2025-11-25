@@ -9,15 +9,15 @@ app.use(express.json());
 
 const authRoutes = require("../routes/auth.routes");
 
-// Rutas
-app.use(authRoutes);
+// Rutas de autenticación
+app.use("/auth", authRoutes);
 
-// Manejador de errores
-app.use(errorHandler);
-
-// Test
+// Test & Health
 app.get("/_health", (req, res) => {
   res.json({ok: true});
 });
+
+// Handler global de errores
+app.use(errorHandler);
 
 module.exports = app;

@@ -1,56 +1,39 @@
+/* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
+
 const AuthService = require("../services/auth.service");
-const {sendResponse, sendError} = require("../utils/responseHandler");
-const {httpStatusCodes, AuthorizationError, ResourceNotFoundError} = require("../utils/httpStatusCodes");
+const {sendResponse} = require("../utils/responseHandler");
+const AuthorizationError = require("../errors/AuthorizationError");
+const ResourceNotFoundError = require("../errors/ResourceNotFoundError");
 
 const admin = require("../../config/firebase");
 
-// registra un usuario
-exports.register = async (req, res) => {
+/**
+ * Registra un usuario normal (no worker).
+ */
+exports.register = async (req, res, next) => {
   try {
-    const {name, email, password, phoneNumber} = req.body;
+    const user = await AuthService.register(req.body);
 
-    if (!name || !email || !password || !phoneNumber) {
-      return sendError(
-          res,
-          httpStatusCodes.badRequest,
-          "Faltan datos obligatorios.",
-      );
-    }
-
-    const user = await AuthService.register({
-      name,
-      email,
-      password,
-      phoneNumber,
-    });
-
-    return sendResponse(res, httpStatusCodes.created, {
+    return sendResponse(res, 201, {
       message: "Usuario registrado correctamente.",
       user,
     });
   } catch (error) {
-    console.error("❌ Error en register:", error.message);
-    return sendError(res, httpStatusCodes.internalServerError, error.message);
+    next(error);
   }
 };
 
-// logea un usuario
-exports.login = async (req, res) => {
+/**
+ * Login de usuario.
+ * Devuelve tokens + perfil.
+ */
+exports.login = async (req, res, next) => {
   try {
-    const {email, password} = req.body || {};
-    if (!email || !password) {
-      return sendError(
-          res,
-          httpStatusCodes.badRequest,
-          "Email y password son obligatorios.",
-      );
-    }
+    const result = await AuthService.login(req.body);
 
-    const result = await AuthService.login({email, password});
-
-    return sendResponse(res, httpStatusCodes.ok, {
-      message: `Hola! ${result.displayName || result.email}`,
+    return sendResponse(res, 200, {
+      message: `Bienvenido ${result.displayName || result.email}`,
       idToken: result.idToken,
       refreshToken: result.refreshToken,
       expiresIn: result.expiresIn,
@@ -59,84 +42,81 @@ exports.login = async (req, res) => {
       profile: result.profile,
     });
   } catch (error) {
-    const msg =
-      error?.response?.data?.error?.message ||
-      error.message ||
-      "Error en login";
-    const status =
-      msg === "EMAIL_NOT_FOUND" || msg === "INVALID_PASSWORD" ?
-        httpStatusCodes.unautorized :
-        httpStatusCodes.internalServerError;
-
-    return sendError(res, status, msg);
+    next(error);
   }
 };
 
-// Devuelve el perfil del usuario autenticado
+/**
+ * Devuelve el perfil del usuario autenticado.
+ * Requiere auth middleware -> req.user.uid
+ */
 exports.me = async (req, res, next) => {
   try {
     const uid = req.user?.uid;
-
-    if (!uid) {
-      throw new AuthorizationError("No autenticado: token inválido o ausente.");
-    }
+    if (!uid) throw new AuthorizationError("No autenticado.");
 
     const db = admin.database();
     const snapshot = await db.ref(`users/${uid}`).get();
 
     if (!snapshot.exists()) {
-      throw new ResourceNotFoundError("Perfil no encontrado en la base de datos.");
+      throw new ResourceNotFoundError("Perfil no encontrado.");
     }
 
-    const profile = snapshot.val();
-
-    return sendResponse(res, httpStatusCodes.ok, {uid, profile});
+    return sendResponse(res, 200, {
+      uid,
+      profile: snapshot.val(),
+    });
   } catch (error) {
     next(error);
   }
 };
 
-// cierra sesión
+/**
+ * Cierra sesión revocando los refresh tokens del usuario.
+ */
 exports.logout = async (req, res, next) => {
   try {
     const uid = req.user?.uid;
-
-    if (!uid) {
-      throw new AuthorizationError("No autenticado: token inválido o ausente.");
-    }
+    if (!uid) throw new AuthorizationError("No autenticado.");
 
     await admin.auth().revokeRefreshTokens(uid);
 
-    return sendResponse(res, httpStatusCodes.ok, {
-      message: "Logout exitoso. Tokens revocados correctamente.",
+    return sendResponse(res, 200, {
+      message: "Logout exitoso. Tokens revocados.",
     });
   } catch (error) {
     next(error);
   }
 };
 
-// envia correo
-exports.forgotPassword = async (req, res) => {
+/**
+ * Envía email con instrucción para resetear contraseña.
+ */
+exports.forgotPassword = async (req, res, next) => {
   try {
-    const {email} = req.body;
-    await AuthService.sendPasswordResetEmail(email);
-    return sendResponse(res, httpStatusCodes.ok, {
-      message: "Te enviamos un email para reestablecer tu contraseña.",
+    await AuthService.sendPasswordResetEmail(req.body.email);
+
+    return sendResponse(res, 200, {
+      message: "Se envió un email para restablecer la contraseña.",
     });
   } catch (error) {
-    return sendError(res, httpStatusCodes.badRequest, error.message);
+    next(error);
   }
 };
 
-// reset de contraseña
-exports.resetPassword = async (req, res) => {
+/**
+ * Resetea la contraseña usando el código enviado al email.
+ */
+exports.resetPassword = async (req, res, next) => {
   try {
     const {oobCode, newPassword} = req.body;
+
     await AuthService.resetPassword(oobCode, newPassword);
-    return sendResponse(res, httpStatusCodes.ok, {
+
+    return sendResponse(res, 200, {
       message: "Contraseña actualizada correctamente.",
     });
   } catch (error) {
-    return sendError(res, httpStatusCodes.badRequest, error.message);
+    next(error);
   }
 };
