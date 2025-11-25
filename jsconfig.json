@@ -1,0 +1,17 @@
+// jsconfig.json
+{
+    "compilerOptions": {
+        // Habilita un chequeo de tipos básico para archivos JS
+        "checkJs": true, 
+        // Permite usar módulos de Node.js (require/module.exports)
+        "module": "commonjs", 
+        // Especifica el destino del lenguaje (ES2020 o superior es bueno)
+        "target": "es2020",
+        // Permite usar la sintaxis import/export de ES6 con require (para interoperabilidad)
+        "esModuleInterop": true 
+    },
+    // Excluye la carpeta de dependencias para acelerar el IntelliSense
+    "exclude": [
+        "node_modules"
+    ]
+}
