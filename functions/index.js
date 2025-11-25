@@ -11,7 +11,7 @@ const functions = require("firebase-functions");
 
 // Apps
 const authApp = require("./src/apps/auth.app");
-//const usersApp = require("./src/apps/users.app");
+const usersApp = require("./src/apps/user.app");
 // importar job.app
 
 // Exportar como funciones independientes
