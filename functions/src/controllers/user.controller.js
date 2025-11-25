@@ -1,181 +1,222 @@
-const UserService = require('../services/user.service')
+/* eslint-disable valid-jsdoc */
+/* eslint-disable camelcase */
+/* eslint-disable max-len */
+const UserService = require("../services/user.service");
+const {sendResponse} = require("../utils/responseHandler");
+const {httpStatusCodes} = require("../utils/httpStatusCodes");
 
-const registerWorker = async(req, res, next) => {
-    try {
-        const data = req.body;
-        const newWorker = await UserService.createUserWork(data);
+/**
+ * Controlador para manejo de usuarios y trabajadores.
+ */
 
-        return res.status(201).json({
-            success: true,
-            message: 'Trabajador registrado exitosamente',
-            trabajador: newWorker
-        })
-    } catch (error) {
-        next(error)
-    }
-}
+/* ========================= REGISTRO ========================= */
 
-const getProfile = async(req, res, next) => {
-    try {
-        const email = req.params;
+exports.registerWorker = async (req, res, next) => {
+  try {
+    const newWorker = await UserService.createUserWork(req.body);
+    return sendResponse(res, httpStatusCodes.created, {
+      message: "Trabajador registrado exitosamente",
+      trabajador: newWorker,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
-        if(!email){
-            return res.status(400).json({message: 'Email requerido'})
-        }
+/* ======================== OBTENER PERFILES ======================== */
 
-        const profile = await UserService.getUserProfile(email);
+exports.getProfileByEmail = async (req, res, next) => {
+  try {
+    const profile = await UserService.getUserProfileByEmail(req.params.email);
+    return sendResponse(res, httpStatusCodes.ok, profile);
+  } catch (err) {
+    next(err);
+  }
+};
 
-        if(!profile){
-            // throw new NotFoundError()
-            throw new Error('Usuario no encontrado')
-        }
+exports.getProfileByUid = async (req, res, next) => {
+  try {
+    const profile = await UserService.getUserProfileByUid(req.params.uid);
+    return sendResponse(res, httpStatusCodes.ok, profile);
+  } catch (err) {
+    next(err);
+  }
+};
 
-        return res.status(200).json(profile)
-    } catch (error) {
-        next(error)
-    }
-}
+/**
+ * Devuelve el perfil del usuario autenticado (requiere middleware de auth).
+ */
+exports.getMe = async (req, res, next) => {
+  try {
+    const uid = req.user?.uid;
+    const profile = await UserService.getUserProfileByUid(uid);
+    return sendResponse(res, httpStatusCodes.ok, {uid, profile});
+  } catch (err) {
+    next(err);
+  }
+};
 
-const updateProfile = async(req,res,next) => {
-    try{
-        const data = req.body;
-        const update = await UserService.updateProfile(data);
+/* ====================== ACTUALIZACIÓN DE PERFIL ====================== */
 
-        if(!update){
-            // throw new NotFoundError()
-            throw new Error('Usuario no encontrado para actualizacion')
-        }
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const updated = await UserService.updateProfileByUid(req.params.uid, req.body);
+    return sendResponse(res, httpStatusCodes.ok, {
+      message: "Perfil actualizado",
+      perfil: updated,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
-        return res.status(200).json({
-            message: 'Perfil actualizado',
-            perfil: update
-        })
-    } catch (error){
-        next(error)
-    }
-}
+/* ------- Actualizaciones simples (name, description, etc.) ------- */
 
-const uploadJobPhoto = async (req, res, next) => {
-    try {
-        const uid = req.params;
-        const job_image = req.body.photoUrl;
+exports.updateName = async (req, res, next) => {
+  try {
+    const updated = await UserService.updateProfileByUid(req.params.uid, {name: req.body.name});
+    return sendResponse(res, httpStatusCodes.ok, {
+      message: "Nombre actualizado",
+      updated,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
-        if(!uid){
-            const authError = new Error('Usuario no encontrado.');
-             authError.status = 404;
-             throw authError;
-        }
+exports.updateUserDescription = async (req, res, next) => {
+  try {
+    const updated = await UserService.updateProfileByUid(req.params.uid, {
+      userDescription: req.body.userDescription,
+    });
 
-        const newImagen = await UserService.uploadJobPhoto(uid, job_image);
+    return sendResponse(res, httpStatusCodes.ok, {
+      message: "Descripción de usuario actualizada",
+      updated,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
-        return res.status(201).json({
-            message: 'Imagen subida correctamente',
-            image: newImagen
-        })
-    } catch (error) {
-        next(error)
-    }
-}
+exports.updateJobDescription = async (req, res, next) => {
+  try {
+    const updated = await UserService.updateProfileByUid(req.params.uid, {
+      job_description: req.body.job_description,
+    });
 
-const deleteJobPhoto = async (req, res, next) => {
-    try {
-        const uid = req.params;
-        const imageId = req.body.id;
+    return sendResponse(res, httpStatusCodes.ok, {
+      message: "Descripción del trabajo actualizada",
+      updated,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
-        if(!uid){
-            const authError = new Error('Usuario no encontrado.');
-             authError.status = 404;
-             throw authError;
-        }
+exports.updateLocation = async (req, res, next) => {
+  try {
+    const updated = await UserService.updateProfileByUid(req.params.uid, {
+      location: req.body.location,
+    });
 
-        await UserService.deleteJobPhoto(uid, imageId);
+    return sendResponse(res, httpStatusCodes.ok, {
+      message: "Ubicación actualizada",
+      updated,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
-        return res.status(204).send();
-    } catch (error) {
-        next(error)
-    }
-}
+exports.updatePhone = async (req, res, next) => {
+  try {
+    const updated = await UserService.updateProfileByUid(req.params.uid, {
+      phoneNumber: req.body.phone,
+    });
 
-const updateProfilePic = async(req, res, next) => {
-    try {
-        const uid = req.params;
-        const newImage = req.body.ImageProfile;
+    return sendResponse(res, httpStatusCodes.ok, {
+      message: "Teléfono actualizado",
+      updated,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
-        if(!uid){
-            const authError = new Error('Usuario no encontrado.');
-             authError.status = 404;
-             throw authError;
-        }
+/* ======================== FOTOS DE TRABAJO ======================== */
 
-        const result = await UserService.updateProfilePic(uid, newImage);
+exports.uploadJobPhoto = async (req, res, next) => {
+  try {
+    const newImage = await UserService.uploadJobPhoto(req.params.uid, req.body.photoUrl);
+    return sendResponse(res, httpStatusCodes.created, {
+      message: "Imagen subida correctamente",
+      image: newImage,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
-        return res.status(200).json(result);
-    } catch (error) {
-        next(error)
-    }
-}
+exports.deleteJobPhoto = async (req, res, next) => {
+  try {
+    const imageId = req.body.id || req.query.id;
+    const result = await UserService.deleteJobPhoto(req.params.uid, imageId);
+    return sendResponse(res, httpStatusCodes.ok, result);
+  } catch (err) {
+    next(err);
+  }
+};
 
-const updateProfileWorker = async (req, res, next) => {
-    try {
-        const uid = req.params;
-        const data = req.body;
+/* ======================= FOTO DE PERFIL ======================= */
 
-        if(!uid){
-            const authError = new Error('Usuario no encontrado.');
-             authError.status = 404;
-             throw authError;
-        }
+exports.updateProfilePic = async (req, res, next) => {
+  try {
+    const result = await UserService.updateProfilePic(req.params.uid, req.body.imageProfile);
+    return sendResponse(res, httpStatusCodes.ok, result);
+  } catch (err) {
+    next(err);
+  }
+};
 
-        const result = await UserService.updateProfileWorker(uid, data);
+/* =================== ACTUALIZAR PERFIL DE WORKER =================== */
 
-        return res.status(200).json(result);
-    } catch (error) {
-        next(error)
-    }
-}
+exports.updateProfileWorker = async (req, res, next) => {
+  try {
+    const result = await UserService.updateProfileWorker(req.params.uid, req.body);
+    return sendResponse(res, httpStatusCodes.ok, result);
+  } catch (err) {
+    next(err);
+  }
+};
 
-const getAllWorkers = async(req, res, next) => {
-    try {
-        const result = await UserService.getAllWorkers();
-        return res.status(200).json(result);
-    } catch (error) {
-        next(error)
-    }
-}
+/* ====================== LISTAR Y BUSCAR WORKERS ====================== */
 
-const searchWorkers = async(req, res, next) => {
-    try {
-        const search = req.body.search;
-        const id_job = req.body.id_job;
+exports.getAllWorkers = async (req, res, next) => {
+  try {
+    const result = await UserService.getAllWorkers();
+    return sendResponse(res, httpStatusCodes.ok, result);
+  } catch (err) {
+    next(err);
+  }
+};
 
-        const result = await UserService.searchWorkers(search, id_job);
+exports.searchWorkers = async (req, res, next) => {
+  try {
+    const result = await UserService.searchWorkers(req.query.search, req.query.id_job);
+    return sendResponse(res, httpStatusCodes.ok, result);
+  } catch (err) {
+    next(err);
+  }
+};
 
-        return res.status(200).json(result)
-    } catch (error) {
-        next(error)
-    }
-}
+/* ====================== FOTOS DE USUARIO ====================== */
 
-const getUserPhotos = async (req, res, next) => {
-    try {
-        const uid = req.params;
-
-        const urls = await UserService.getUserPhotos();
-        return res.status(200).json(urls);
-    } catch (error) {
-        next(error);
-    }
-}
-
-module.exports = {
-    registerWorker,
-    getProfile,
-    getAllWorkers,
-    getUserPhotos,
-    updateProfile,
-    updateProfilePic,
-    updateProfileWorker,
-    uploadJobPhoto,
-    deleteJobPhoto,
-    searchWorkers,
-}
+exports.getUserPhotos = async (req, res, next) => {
+  try {
+    const urls = await UserService.getUserPhotos(req.params.uid);
+    return sendResponse(res, httpStatusCodes.ok, urls);
+  } catch (err) {
+    next(err);
+  }
+};

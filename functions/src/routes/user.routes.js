@@ -1,17 +1,71 @@
-    const express = require('express');
-    const router = express.Router();
+/* eslint-disable max-len */
+/* eslint-disable new-cap */
+const express = require("express");
+const router = express.Router();
+const usersController = require("../controllers/user.controller");
+const validate = require("../middlewares/validate.middleware");
+const auth = require("../middlewares/auth.middleware");
 
-    const userController = require('../controllers/user.controller');
+const {
+  updateNameSchema,
+  updateUserDescriptionSchema,
+  updateJobDescriptionSchema,
+  updateLocationSchema,
+  updatePhoneSchema,
+} = require("../schemas/user.validation");
 
-    router.post('/register', userController.registerWorker);
-    router.get('/', userController.getAllWorkers);
-    router.get('/search', userController.searchWorkers);
-    router.get('/photos/:uid', userController.getUserPhotos);
-    router.get('/email/:email', userController.getProfile);
-    router.patch('/profile', userController.updateProfile);
-    router.patch('/profile/:uid', userController.updateProfileWorker);
-    router.patch('/profile/pic/:uid', userController.updateProfilePic);
-    router.post('/photo/:uid', userController.uploadJobPhoto);
-    router.delete('/photo/:uid', userController.deleteJobPhoto);
+/**
+ * Rutas de usuarios y trabajadores.
+ */
 
-    module.exports = router;
+/* =========================== PERFILES =========================== */
+
+// Obtener perfil por email o UID
+router.get("/profile/email/:email", usersController.getProfileByEmail);
+router.get("/profile/uid/:uid", usersController.getProfileByUid);
+
+// Perfil del usuario autenticado
+router.get("/me", auth, usersController.getMe);
+
+/* ===================== ACTUALIZACIÓN GENERAL ===================== */
+
+router.put("/update/:uid", usersController.updateProfile);
+
+/* ==================== ACTUALIZACIONES SIMPLES ==================== */
+
+router.put("/update/name/:uid", validate(updateNameSchema), usersController.updateName);
+router.put("/update/user-description/:uid", validate(updateUserDescriptionSchema), usersController.updateUserDescription);
+router.put("/update/job-description/:uid", validate(updateJobDescriptionSchema), usersController.updateJobDescription);
+router.put("/update/location/:uid", validate(updateLocationSchema), usersController.updateLocation);
+router.put("/update/phone/:uid", validate(updatePhoneSchema), usersController.updatePhone);
+
+
+/* ============================ IMÁGENES ============================ */
+
+// Subir imagen de trabajo
+router.post("/photos/:uid", usersController.uploadJobPhoto);
+
+// Eliminar imagen de trabajo
+router.delete("/photos/:uid", usersController.deleteJobPhoto);
+
+// Actualizar foto de perfil
+router.put("/profile-photo/:uid", usersController.updateProfilePic);
+
+// Obtener solo URLs de fotos del usuario
+router.get("/photos/user/:uid", usersController.getUserPhotos);
+
+/* ============================ WORKERS ============================ */
+
+// Registro de trabajador
+router.post("/worker/register", usersController.registerWorker);
+
+// Actualizar perfil completo de worker
+router.put("/worker/update/:uid", usersController.updateProfileWorker);
+
+// Listado de todos los workers
+router.get("/workers", usersController.getAllWorkers);
+
+// Búsqueda filtrada de workers
+router.get("/workers/search", usersController.searchWorkers);
+
+module.exports = router;

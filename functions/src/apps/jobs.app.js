@@ -1,19 +1,23 @@
 const express = require("express");
 const cors = require("cors");
 const errorHandler = require("../middlewares/errorHandler.middleware");
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// Rutas de usuarios
-const userRoutes = require("../routes/user.routes");
-app.use("/users", userRoutes);
+const jobsRoutes = require("../routes/jobs.routes");
 
-// Test & Health
-app.get("/_health", (req, res) => res.json({ok: true}));
+// Rutas
+app.use(jobsRoutes);
 
-// Handler global de errores
+// Manejador de errores
 app.use(errorHandler);
+
+// Test
+app.get("/_health", (req, res) => {
+  res.json({ok: true});
+});
 
 module.exports = app;
