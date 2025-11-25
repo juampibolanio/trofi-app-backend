@@ -14,16 +14,28 @@ const {
   resetPasswordSchema,
 } = require("../schemas/auth.validation");
 
-// Rutas públicas
+// -------------------- RUTAS PÚBLICAS --------------------
+
+// Registro de usuario con validación de datos
 router.post("/register", validate(registerSchema), AuthController.register);
+
+// Login de usuario con validación de datos
 router.post("/login", validate(loginSchema), AuthController.login);
 
-// Rutas protegidas
+// -------------------- RUTAS PROTEGIDAS (requieren autenticación) --------------------
+
+// Obtener perfil del usuario autenticado
 router.get("/me", authMiddleware, AuthController.me);
+
+// Cerrar sesión del usuario autenticado
 router.post("/logout", authMiddleware, AuthController.logout);
 
-// Recuperación de contraseña
+// -------------------- RECUPERACIÓN DE CONTRASEÑA --------------------
+
+// Solicitar enlace de reseteo de contraseña
 router.post("/forgot-password", validate(forgotPasswordSchema), AuthController.forgotPassword);
+
+// Restablecer contraseña usando código enviado por email
 router.post("/reset-password", validate(resetPasswordSchema), AuthController.resetPassword);
 
 module.exports = router;

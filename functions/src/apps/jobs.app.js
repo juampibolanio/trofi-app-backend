@@ -9,15 +9,13 @@ app.use(express.json());
 
 const jobsRoutes = require("../routes/jobs.routes");
 
-// Rutas
-app.use(jobsRoutes);
+// Rutas de trabajos
+app.use("/jobs", jobsRoutes);
 
-// Manejador de errores
+// Test & Health
+app.get("/_health", (req, res) => res.json({ok: true}));
+
+// Handler global de errores
 app.use(errorHandler);
-
-// Test
-app.get("/_health", (req, res) => {
-  res.json({ok: true});
-});
 
 module.exports = app;
