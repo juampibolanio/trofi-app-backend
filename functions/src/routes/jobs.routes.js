@@ -11,20 +11,20 @@ const {createJobSchema, updateJobSchema} = require("../schemas/jobs.validation")
 // -------------------- RUTAS PÚBLICAS --------------------
 
 // Obtener todos los trabajos
-router.get("/jobs", JobsController.getAllJobs);
+router.get("/", JobsController.getAllJobs);
 
 // Obtener un trabajo específico por ID
-router.get("/jobs/:id", JobsController.getJobById);
+router.get("/:id", JobsController.getJobById);
 
 // -------------------- RUTAS PROTEGIDAS (requieren autenticación) --------------------
 
 // Crear un nuevo trabajo (requiere token y body válido)
-router.post("/jobs", authMiddleware, validate(createJobSchema), JobsController.createJob);
+router.post("/", authMiddleware, validate(createJobSchema), JobsController.createJob);
 
 // Actualizar un trabajo existente por ID (requiere token y body válido)
-router.put("/jobs/:id", authMiddleware, validate(updateJobSchema), JobsController.updateJob);
+router.put("/:id", authMiddleware, validate(updateJobSchema), JobsController.updateJob);
 
 // Eliminar un trabajo por ID (requiere token)
-router.delete("/jobs/:id", authMiddleware, JobsController.deleteJob);
+router.delete("/:id", authMiddleware, JobsController.deleteJob);
 
 module.exports = router;

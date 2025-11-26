@@ -8,7 +8,7 @@ app.use(express.json());
 
 // Rutas de usuarios
 const userRoutes = require("../routes/user.routes");
-app.use("/users", userRoutes);
+app.use(userRoutes);
 
 // Test & Health
 app.get("/_health", (req, res) => res.json({ok: true}));
