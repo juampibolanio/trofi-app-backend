@@ -148,15 +148,23 @@ exports.updatePhone = async (req, res, next) => {
 
 exports.uploadJobPhoto = async (req, res, next) => {
   try {
+    console.log("📸 SUBIENDO FOTO - BODY:", req.body);
+    console.log("📸 SUBIENDO FOTO - UID:", req.params.uid);
+
     const newImage = await UserService.uploadJobPhoto(req.params.uid, req.body.photoUrl);
-    return sendResponse(res, httpStatusCodes.created, {
+
+    console.log("📸 FOTO INSERTADA EN RTDB:", newImage);
+
+    return sendResponse(res, 201, {
       message: "Imagen subida correctamente",
       image: newImage,
     });
   } catch (err) {
+    console.error("❌ ERROR SUBIENDO FOTO:", err);
     next(err);
   }
 };
+
 
 exports.deleteJobPhoto = async (req, res, next) => {
   try {

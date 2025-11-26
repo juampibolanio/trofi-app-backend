@@ -146,26 +146,31 @@ class UserService {
    */
   async uploadJobPhoto(uid, photoUrl) {
     if (!uid) throw new DataValidationError("UID no ingresado");
-    if (!photoUrl || typeof photoUrl !== "string") throw new DataValidationError("URL de imagen inválida");
+    if (!photoUrl || typeof photoUrl !== "string") {
+      throw new DataValidationError("URL de imagen inválida");
+    }
 
     const ref = db.ref(`users/${uid}/job_images`);
 
     try {
       const {committed, snapshot} = await ref.transaction((currentData) => {
+        // Normalizar el contenido actual
         let images = currentData ?? [];
 
         if (typeof images === "string") {
           try {
             images = JSON.parse(images);
-          } catch (e) {
+          } catch (err) {
             throw new Error("job_images corrupto en la base de datos");
           }
         }
 
         if (!Array.isArray(images)) images = [];
 
+        // Generar la nueva imagen con ID incremental
         const nextId = getNextId(images);
         const newImage = {id: nextId, url: photoUrl};
+
         images.push(newImage);
         return images;
       });
@@ -175,7 +180,7 @@ class UserService {
       const finalImages = snapshot.val();
       return finalImages[finalImages.length - 1];
     } catch (err) {
-      if (err instanceof DatabaseError) throw err;
+      if (err instanceof DatabaseError || err instanceof DataValidationError) throw err;
       throw new DatabaseError(err.message || "Error subiendo foto de trabajo");
     }
   }

@@ -10,7 +10,7 @@ app.use(express.json());
 const jobsRoutes = require("../routes/jobs.routes");
 
 // Rutas de trabajos
-app.use("/jobs", jobsRoutes);
+app.use(jobsRoutes);
 
 // Test & Health
 app.get("/_health", (req, res) => res.json({ok: true}));

@@ -10,7 +10,7 @@ app.use(express.json());
 const authRoutes = require("../routes/auth.routes");
 
 // Rutas de autenticación
-app.use("/auth", authRoutes);
+app.use(authRoutes);
 
 // Test & Health
 app.get("/_health", (req, res) => {
