@@ -12,7 +12,7 @@ const userRoutes = require('../routes/user.routes');
 app.use('/worker', userRoutes);
 
 app.get('/test', (req, res) => {
-    res.json({ message: "La ruta TEST funciona." });
+    res.json({ message: "La ruta test de users funciona." });
 });
 // Manejador de errores
 app.use(errorHandler);

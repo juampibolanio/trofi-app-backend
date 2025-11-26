@@ -17,4 +17,4 @@ const userWork = Joi.object({
   crated_at: Joi.date().required()
 })
 
-module.exports = { useWork };
+module.exports = { userWork };
