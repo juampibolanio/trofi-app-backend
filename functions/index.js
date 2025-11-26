@@ -1,5 +1,4 @@
 process.env.FIREBASE_CONFIG_LOADED = "true";
-
 // Cargar entorno
 require("./config/environment");
 
