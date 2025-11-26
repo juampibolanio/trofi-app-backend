@@ -7,12 +7,12 @@ const validate = require("../middlewares/validate.middleware");
 const {createJobSchema, updateJobSchema} = require("../schemas/jobs.validation");
 
 // PÚBLICOS
-router.get("/jobs", JobsController.getAllJobs);
-router.get("/jobs/:id", JobsController.getJobById);
+router.get("/", JobsController.getAllJobs);
+router.get("/:id", JobsController.getJobById);
 
 // PROTEGIDOS (requieren auth)
-router.post("/jobs", authMiddleware, validate(createJobSchema), JobsController.createJob);
-router.put("/jobs/:id", authMiddleware, validate(updateJobSchema), JobsController.updateJob);
-router.delete("/jobs/:id", authMiddleware, JobsController.deleteJob);
+router.post("", authMiddleware, validate(createJobSchema), JobsController.createJob);
+router.put("/:id", authMiddleware, validate(updateJobSchema), JobsController.updateJob);
+router.delete("/:id", authMiddleware, JobsController.deleteJob);
 
 module.exports = router;
