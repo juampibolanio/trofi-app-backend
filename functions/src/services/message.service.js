@@ -1,9 +1,4 @@
 /* eslint-disable max-len */
-/**
- * MessageService
- * - Servicio para operaciones de mensajería usando Firebase Realtime Database
- */
-
 const admin = require("../../config/firebase");
 const db = admin.database();
 

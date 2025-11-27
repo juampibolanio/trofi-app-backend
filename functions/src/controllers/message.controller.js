@@ -1,16 +1,9 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
-/**
- * MessageController
- * - Controlador para operaciones de mensajería
- */
-
 const MessageService = require("../services/message.service");
 
 /**
  * Inicia un chat o retorna uno existente
- * POST /chat/start
- * Body: { senderId, receiverId, content? }
  */
 const startChat = async (req, res, next) => {
   try {
@@ -30,7 +23,6 @@ const startChat = async (req, res, next) => {
 
 /**
  * Obtiene todos los chats del usuario autenticado
- * GET /chat/user/:uid
  */
 const getUserChats = async (req, res, next) => {
   try {
@@ -49,8 +41,6 @@ const getUserChats = async (req, res, next) => {
 
 /**
  * Obtiene los mensajes de un chat
- * GET /chat/:chatId/messages
- * Query: ?limit=50
  */
 const getMessages = async (req, res, next) => {
   try {
@@ -70,8 +60,6 @@ const getMessages = async (req, res, next) => {
 
 /**
  * Envía un mensaje en un chat
- * POST /chat/:chatId/message
- * Body: { senderId, content }
  */
 const sendMessage = async (req, res, next) => {
   try {
@@ -92,8 +80,6 @@ const sendMessage = async (req, res, next) => {
 
 /**
  * Elimina un mensaje (solo el remitente)
- * DELETE /chat/:chatId/message/:messageId
- * Body: { userId }
  */
 const deleteMessage = async (req, res, next) => {
   try {
@@ -113,7 +99,6 @@ const deleteMessage = async (req, res, next) => {
 
 /**
  * Elimina un chat para el usuario (soft delete)
- * DELETE /chat/:chatId/user/:uid
  */
 const deleteChat = async (req, res, next) => {
   try {
@@ -132,8 +117,6 @@ const deleteChat = async (req, res, next) => {
 
 /**
  * Marca mensajes como leídos
- * PUT /chat/:chatId/read
- * Body: { userId }
  */
 const markAsRead = async (req, res, next) => {
   try {
