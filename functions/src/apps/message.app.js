@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+
 const errorHandler = require("../middlewares/errorHandler.middleware");
 
 const app = express();
@@ -7,17 +8,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const authRoutes = require("../routes/auth.routes");
+const messageRoutes = require("../routes/message.routes");
 
-// Rutas de autenticación
-app.use(authRoutes);
+app.use(messageRoutes);
 
-// Test & Health
-app.get("/_health", (req, res) => {
-  res.json({ok: true});
+app.get("/test", (req, res) => {
+  res.json({
+    message: "La ruta test de mensajes funciona",
+  });
 });
 
-// Handler global de errores
 app.use(errorHandler);
 
 module.exports = app;

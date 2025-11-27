@@ -1,0 +1,57 @@
+// POST worker/register
+{
+    "name": "Ana García",
+    "email": "ana.garcia@test.com",
+    "password": "secure123",
+    "phoneNumber": "1155554444",
+    "userDescription": "Diseñadora web especialista en interfaces de usuario.",
+    "imageProfile": "http://placeholder.com/default.jpg",
+    "dni": "35123456",
+    "location": "Resistencia, Chaco",
+    "is_worker": true,
+    "id_job": 5,
+    "job_description": "Diseño UX/UI, maquetación y prototipado.",
+    "job_images": []
+}
+
+// PATCH /worker/profile/:uid
+
+{
+    "dni": "35123456",
+    "userDescription": "Diseñadora web con 5 años de experiencia.",
+    "imageProfile": "http://nueva.url/perfil.jpg",
+    "location": "Buenos Aires, Argentina",
+    "is_worker": true,
+    "job_description": "Desarrollo de landing pages y sitios corporativos.",
+    "job_images": [
+        {"id": 1, "url": "http://misproyectos.com/trabajo1.png"},
+        {"id": 2, "url": "http://misproyectos.com/trabajo2.png"}
+    ],
+    "id_job": 5
+}
+
+//GET worker/
+// GET worker/search/ 
+// GET worker/email/{email}
+// PATCH /worker/profile 
+{
+    "email": "ana.garcia@test.com",
+    "location": "Madrid, España"
+}
+
+// PATCH /worker/profile/pic/:uid 
+{
+    "newImage": "http://nueva.url/perfil.jpg"
+}
+
+// POST /worker/photo/UID_DEL_TRABAJADOR
+{
+    "photoUrl": "http://misproyectos.com/img1.jpg"
+}
+
+// GET /worker/photos/UID_DEL_TRABAJADOR
+
+// DELETE /worker/photo/UID_DEL_TRABAJADOR
+{
+    "id": 1
+}

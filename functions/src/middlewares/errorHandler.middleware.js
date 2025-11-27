@@ -1,24 +1,28 @@
-const {
-  DataValidationError,
-  AuthorizationError,
-  DatabaseError,
-  ResourceNotFoundError,
-  httpStatusCodes,
-} = require("../utils/httpStatusCodes");
+/* eslint-disable max-len */
+/* eslint-disable require-jsdoc */
+
+const BaseError = require("../errors/BaseError");
+const {httpStatusCodes} = require("../utils/httpStatusCodes");
 
 module.exports = (err, req, res, next) => {
-  console.error("Error:", err.name, "-", err.message);
+  console.error("Ocurrió un error:", err.name, "-", err.message);
 
-  let status = httpStatusCodes.internalServerError;
-  const message = err.message || "Error interno del servidor";
+  // Errores personalizados (BaseError y derivados)
+  if (err instanceof BaseError) {
+    return res.status(err.statusCode).json({
+      success: false,
+      message: err.message,
+      data: null,
+      timestamp: err.timestamp,
+    });
+  }
 
-  if (err instanceof DataValidationError) status = httpStatusCodes.badRequest;
-  if (err instanceof AuthorizationError) status = httpStatusCodes.unautorized;
-  if (err instanceof ResourceNotFoundError) status = httpStatusCodes.notFound;
-  if (err instanceof DatabaseError) status = httpStatusCodes.internalServerError;
-
-  res.status(status).json({
+  // Errores inesperados
+  return res.status(httpStatusCodes.internalServerError).json({
     success: false,
-    error: message,
+    message: "Error interno del servidor",
+    data: null,
+    timestamp: new Date().toISOString(),
+    details: err.message, // útil en desarrollo
   });
 };

@@ -7,15 +7,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const authRoutes = require("../routes/auth.routes");
+const jobsRoutes = require("../routes/jobs.routes");
 
-// Rutas de autenticación
-app.use(authRoutes);
+// Rutas de trabajos
+app.use(jobsRoutes);
 
 // Test & Health
-app.get("/_health", (req, res) => {
-  res.json({ok: true});
-});
+app.get("/_health", (req, res) => res.json({ok: true}));
 
 // Handler global de errores
 app.use(errorHandler);
