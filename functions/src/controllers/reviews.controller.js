@@ -2,7 +2,7 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
 const ReviewsService = require("../services/reviews.service");
-const { syncReview, deleteReviewSync } = require('../services/analytics.service');
+const {syncReview, deleteReviewSync} = require("../services/analytics.service");
 
 /**
  * Crea una nueva reseña
@@ -28,7 +28,7 @@ exports.createReview = async (req, res, next) => {
       reviewed: reviewed_id,
       score,
       description,
-      created_at: review.created_at,
+      created_at: new Date(review.created_at).toISOString(),
     });
 
     return res.status(201).json({
