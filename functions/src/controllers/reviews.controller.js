@@ -2,6 +2,7 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
 const ReviewsService = require("../services/reviews.service");
+const { syncReview, deleteReviewSync } = require('../services/analytics.service');
 
 /**
  * Crea una nueva reseña
@@ -20,6 +21,15 @@ exports.createReview = async (req, res, next) => {
         description,
         score,
     );
+
+    await syncReview({
+      id: review.id,
+      reviewer: reviewer_id,
+      reviewed: reviewed_id,
+      score,
+      description,
+      created_at: review.created_at,
+    });
 
     return res.status(201).json({
       success: true,
@@ -136,6 +146,8 @@ exports.deleteReview = async (req, res, next) => {
     const reviewer_id = req.user.uid;
 
     const resultado = await ReviewsService.deleteReview(reviewId, reviewer_id);
+
+    await deleteReviewSync(reviewId);
 
     return res.status(200).json({
       success: true,

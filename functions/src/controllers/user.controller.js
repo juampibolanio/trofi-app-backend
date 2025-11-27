@@ -4,7 +4,7 @@
 const UserService = require("../services/user.service");
 const {sendResponse} = require("../utils/responseHandler");
 const {httpStatusCodes} = require("../utils/httpStatusCodes");
-
+const { updateUserSync, syncUser } = require('../services/analytics.service');
 /**
  * Controlador para manejo de usuarios y trabajadores.
  */
@@ -14,6 +14,16 @@ const {httpStatusCodes} = require("../utils/httpStatusCodes");
 exports.registerWorker = async (req, res, next) => {
   try {
     const newWorker = await UserService.createUserWork(req.body);
+    
+    await syncUser({
+      uid: newWorker.uid,
+      name: newWorker.name,
+      email: newWorker.email,
+      is_worker: true,
+      created_at: new Date().toISOString(),
+      job: newWorker.id_job,
+    });
+    
     return sendResponse(res, httpStatusCodes.created, {
       message: "Trabajador registrado exitosamente",
       trabajador: newWorker,
@@ -61,6 +71,15 @@ exports.getMe = async (req, res, next) => {
 exports.updateProfile = async (req, res, next) => {
   try {
     const updated = await UserService.updateProfileByUid(req.params.uid, req.body);
+    
+    await updateUserSync(req.params.uid, {
+      name: updated.name,
+      email: updated.email,
+      is_worker: updated.is_worker || false,
+      created_at: updated.created_at,
+      job: updated.id_job || null,
+    });
+
     return sendResponse(res, httpStatusCodes.ok, {
       message: "Perfil actualizado",
       perfil: updated,
@@ -192,6 +211,15 @@ exports.updateProfilePic = async (req, res, next) => {
 exports.updateProfileWorker = async (req, res, next) => {
   try {
     const result = await UserService.updateProfileWorker(req.params.uid, req.body);
+    
+    await updateUserSync(req.params.uid, {
+      name: updated.name,
+      email: updated.email,
+      is_worker: updated.is_worker || false,
+      created_at: updated.created_at,
+      job: updated.id_job || null,
+    });
+    
     return sendResponse(res, httpStatusCodes.ok, result);
   } catch (err) {
     next(err);
