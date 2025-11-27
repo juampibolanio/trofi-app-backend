@@ -1,0 +1,18 @@
+// GET  http://127.0.0.1:4000/job/jobs/
+// obtener todos los empleos
+
+// GET  http://127.0.0.1:4000/job/jobs/:ID
+// obtener por categoria
+
+// POST  http://127.0.0.1:4000/job/jobs/
+{
+    "name": "Plomero Gasista"
+}
+
+// PUT http://127.0.0.1:4000/job/jobs/:ID
+{
+    "name": "Carpintero de Muebles"
+
+}
+// DELETE http://127.0.0.1:4000/job/jobs/:ID
+

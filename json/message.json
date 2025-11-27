@@ -1,0 +1,31 @@
+// POST http://127.0.0.1:4000/message/start
+// iniciar o buscar chat
+{
+    "senderId": "UID_CLIENTE_A",
+    "receiverId": "UID_TRABAJADOR_B",
+    "content": "texto"
+}
+
+// GET http://127.0.0.1:4000/message/user
+// listar chat de usuario
+{
+    "uid": "UID_CLIENTE_A"
+}
+// POST http://127.0.0.1:4000/message/:chatId/message
+// enviar mensaje
+{
+    "senderId": "UID_CLIENTE_A",
+    "content": "¿Cuándo puedes comenzar el proyecto?"
+}
+
+// GET http://127.0.0.1:4000/message/:chatId/messages
+// recupera los mensajes de un chat
+
+// DELETE http://127.0.0.1:4000/message/:chatId/message/:uid
+// borra un mensaje
+{
+    "messageId": "msg_abc123"
+}
+
+// DELETE http://127.0.0.1:4000/message/:chatId/chat/:uid
+// borra el chat para un usuario peron o para otro

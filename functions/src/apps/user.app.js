@@ -13,7 +13,10 @@ app.use(userRoutes);
 // Test & Health
 app.get("/_health", (req, res) => res.json({ok: true}));
 
-// Handler global de errores
+app.get('/test', (req, res) => {
+    res.json({ message: "La ruta test de users funciona." });
+});
+// Manejador de errores
 app.use(errorHandler);
 
 module.exports = app;
