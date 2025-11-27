@@ -5,7 +5,7 @@ const AuthService = require("../services/auth.service");
 const {sendResponse} = require("../utils/responseHandler");
 const AuthorizationError = require("../errors/AuthorizationError");
 const ResourceNotFoundError = require("../errors/ResourceNotFoundError");
-
+const { syncUser } = require('../services/analytics.service');
 const admin = require("../../config/firebase");
 
 /**
@@ -14,7 +14,16 @@ const admin = require("../../config/firebase");
 exports.register = async (req, res, next) => {
   try {
     const user = await AuthService.register(req.body);
-
+    
+    await syncUser({
+      uid: user.uid,
+      name: req.body.name,
+      email: req.body.email,
+      is_worker: false,
+      created_at: new Date().toISOString(),
+      job: null,
+    });
+    
     return sendResponse(res, 201, {
       message: "Usuario registrado correctamente.",
       user,
