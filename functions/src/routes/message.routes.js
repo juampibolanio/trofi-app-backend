@@ -1,9 +1,4 @@
 /* eslint-disable new-cap */
-/**
- * Message Routes
- * - Rutas para gestión de chats y mensajes
- */
-
 const express = require("express");
 const router = express.Router();
 

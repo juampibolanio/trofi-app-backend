@@ -1,20 +1,54 @@
 /* eslint-disable max-len */
+/* eslint-disable new-cap */
 const express = require("express");
-// eslint-disable-next-line new-cap
 const router = express.Router();
+
 const ReviewsController = require("../controllers/reviews.controller");
 const authMiddleware = require("../middlewares/auth.middleware");
 const validate = require("../middlewares/validate.middleware");
 const {createReviewSchema, updateReviewSchema} = require("../schemas/reviews.validation");
 
-// PUBLICOS
-router.get("/user-reviews/:userId", ReviewsController.getReviewsByUser);
-router.get("/reviewer-reviews/:reviewerId", ReviewsController.getReviewsByReviewer);
-router.get("/reviews/:reviewId", ReviewsController.getReviewById);
+// ==========================================
+// RUTAS PÚBLICAS (sin autenticación)
+// ==========================================
 
-// PROTEGIDOS (Requieren auth)
-router.post("/reviews", authMiddleware, validate(createReviewSchema), ReviewsController.createReview);
-router.put("/reviews/:reviewId", authMiddleware, validate(updateReviewSchema), ReviewsController.updateReview);
-router.delete("/reviews/:reviewId", authMiddleware, ReviewsController.deleteReview);
+// Obtener reseñas recibidas por un usuario
+router.get("/user/:userId", ReviewsController.getReviewsByUser);
+
+// Obtener reseñas hechas por un usuario (reviewer)
+router.get("/reviewer/:reviewerId", ReviewsController.getReviewsByReviewer);
+
+// Obtener una reseña específica
+router.get("/:reviewId", ReviewsController.getReviewById);
+
+// Obtener promedio de puntuación de un usuario
+router.get("/user/:userId/average", ReviewsController.getUserAverageScore);
+
+// ==========================================
+// RUTAS PROTEGIDAS (requieren autenticación)
+// ==========================================
+
+// Crear nueva reseña
+router.post(
+    "/",
+    authMiddleware,
+    validate(createReviewSchema),
+    ReviewsController.createReview,
+);
+
+// Actualizar reseña
+router.put(
+    "/:reviewId",
+    authMiddleware,
+    validate(updateReviewSchema),
+    ReviewsController.updateReview,
+);
+
+// Eliminar reseña
+router.delete(
+    "/:reviewId",
+    authMiddleware,
+    ReviewsController.deleteReview,
+);
 
 module.exports = router;

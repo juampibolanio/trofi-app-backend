@@ -1,10 +1,13 @@
+/* eslint-disable camelcase */
+/* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
 const ReviewsService = require("../services/reviews.service");
-const {sendResponse, sendError} = require("../utils/responseHandler");
-const {httpStatusCodes} = require("../utils/httpStatusCodes");
 
 /**
- * Crea una nueva reseña.
+ * Crea una nueva reseña
+ * POST /reviews
+ * Body: { reviewed_id, description, score }
+ * Requiere autenticación
  */
 exports.createReview = async (req, res, next) => {
   try {
@@ -18,20 +21,19 @@ exports.createReview = async (req, res, next) => {
         score,
     );
 
-    return sendResponse(res, httpStatusCodes.created, {
+    return res.status(201).json({
+      success: true,
       message: "Reseña creada con éxito",
-      review,
+      data: {review},
     });
   } catch (error) {
-    if (error.message.includes("requerido") || error.message.includes("válido") || error.message.includes("no existe") || error.message.includes("No puedes")) {
-      return sendError(res, httpStatusCodes.badRequest, error.message);
-    }
     next(error);
   }
 };
 
 /**
- * Obtiene todas las reseñas recibidas por un usuario específico.
+ * Obtiene todas las reseñas recibidas por un usuario
+ * GET /reviews/user/:userId
  */
 exports.getReviewsByUser = async (req, res, next) => {
   try {
@@ -39,20 +41,22 @@ exports.getReviewsByUser = async (req, res, next) => {
 
     const reviews = await ReviewsService.getReviewsByUser(userId);
 
-    return sendResponse(res, httpStatusCodes.ok, {
-      user_id: userId,
-      reviews,
+    return res.status(200).json({
+      success: true,
+      data: {
+        userId,
+        reviews,
+        totalReviews: reviews.length,
+      },
     });
   } catch (error) {
-    if (error.message.includes("requerido") || error.message.includes("no encontrado")) {
-      return sendError(res, httpStatusCodes.badRequest, error.message);
-    }
     next(error);
   }
 };
 
 /**
- * Obtiene todas las reseñas hechas por un usuario específico (reviewer).
+ * Obtiene todas las reseñas hechas por un usuario (reviewer)
+ * GET /reviews/reviewer/:reviewerId
  */
 exports.getReviewsByReviewer = async (req, res, next) => {
   try {
@@ -60,20 +64,22 @@ exports.getReviewsByReviewer = async (req, res, next) => {
 
     const reviews = await ReviewsService.getReviewsByReviewer(reviewerId);
 
-    return sendResponse(res, httpStatusCodes.ok, {
-      reviewer_id: reviewerId,
-      reviews,
+    return res.status(200).json({
+      success: true,
+      data: {
+        reviewerId,
+        reviews,
+        totalReviews: reviews.length,
+      },
     });
   } catch (error) {
-    if (error.message.includes("requerido") || error.message.includes("no encontrado")) {
-      return sendError(res, httpStatusCodes.badRequest, error.message);
-    }
     next(error);
   }
 };
 
 /**
- * Obtiene una reseña específica por su ID.
+ * Obtiene una reseña específica por su ID
+ * GET /reviews/:reviewId
  */
 exports.getReviewById = async (req, res, next) => {
   try {
@@ -81,20 +87,20 @@ exports.getReviewById = async (req, res, next) => {
 
     const review = await ReviewsService.getReviewById(reviewId);
 
-    return sendResponse(res, httpStatusCodes.ok, {
+    return res.status(200).json({
       success: true,
-      review,
+      data: {review},
     });
   } catch (error) {
-    if (error.message.includes("requerido") || error.message.includes("no encontrada")) {
-      return sendError(res, httpStatusCodes.notFound, error.message);
-    }
     next(error);
   }
 };
 
 /**
- * Actualiza una reseña existente.
+ * Actualiza una reseña existente
+ * PUT /reviews/:reviewId
+ * Body: { description?, score? }
+ * Requiere autenticación
  */
 exports.updateReview = async (req, res, next) => {
   try {
@@ -109,20 +115,20 @@ exports.updateReview = async (req, res, next) => {
         score,
     );
 
-    return sendResponse(res, httpStatusCodes.ok, {
-      message: "Reseña actualizada correctamente.",
-      review,
+    return res.status(200).json({
+      success: true,
+      message: "Reseña actualizada correctamente",
+      data: {review},
     });
   } catch (error) {
-    if (error.message.includes("requerido") || error.message.includes("válido") || error.message.includes("permiso") || error.message.includes("no encontrada")) {
-      return sendError(res, httpStatusCodes.badRequest, error.message);
-    }
     next(error);
   }
 };
 
 /**
- * Elimina una reseña existente.
+ * Elimina una reseña existente
+ * DELETE /reviews/:reviewId
+ * Requiere autenticación
  */
 exports.deleteReview = async (req, res, next) => {
   try {
@@ -131,14 +137,33 @@ exports.deleteReview = async (req, res, next) => {
 
     const resultado = await ReviewsService.deleteReview(reviewId, reviewer_id);
 
-    return sendResponse(res, httpStatusCodes.ok, {
+    return res.status(200).json({
       success: true,
       ...resultado,
     });
   } catch (error) {
-    if (error.message.includes("requerido") || error.message.includes("permiso") || error.message.includes("no encontrada")) {
-      return sendError(res, httpStatusCodes.badRequest, error.message);
-    }
+    next(error);
+  }
+};
+
+/**
+ * Obtiene el promedio de puntuación de un usuario
+ * GET /reviews/user/:userId/average
+ */
+exports.getUserAverageScore = async (req, res, next) => {
+  try {
+    const {userId} = req.params;
+
+    const averageData = await ReviewsService.getUserAverageScore(userId);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        userId,
+        ...averageData,
+      },
+    });
+  } catch (error) {
     next(error);
   }
 };
