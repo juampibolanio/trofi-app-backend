@@ -1,19 +1,33 @@
-const express = require('express');
+/* eslint-disable new-cap */
+/**
+ * Message Routes
+ * - Rutas para gestión de chats y mensajes
+ */
 
+const express = require("express");
 const router = express.Router();
 
-const messageController = require('../controllers/message.controller');
+const messageController = require("../controllers/message.controller");
 
-router.post('/start', messageController.startChat);
+// Crear/obtener chat entre dos usuarios
+router.post("/start", messageController.startChat);
 
-router.get('/user', messageController.getUserChat);
+// Obtener chats del usuario
+router.get("/user/:uid", messageController.getUserChats);
 
-router.get('/:chatId/messages', messageController.getMessages);
+// Obtener mensajes de un chat
+router.get("/:chatId/messages", messageController.getMessages);
 
-router.post('/:chatId/message', messageController.sendMessage);
+// Enviar mensaje en un chat
+router.post("/:chatId/message", messageController.sendMessage);
 
-router.delete('/:chatId/chat/:uid', messageController.deleteChat);
+// Eliminar chat (soft delete)
+router.delete("/:chatId/user/:uid", messageController.deleteChat);
 
-router.delete('/:chatId/message/:uid', messageController.deleteMessage);
+// Eliminar mensaje individual
+router.delete("/:chatId/message/:messageId", messageController.deleteMessage);
+
+// Marcar mensajes como leídos
+router.put("/:chatId/read", messageController.markAsRead);
 
 module.exports = router;

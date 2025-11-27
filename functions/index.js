@@ -10,11 +10,11 @@ const functions = require("firebase-functions");
 // Apps
 const authApp = require("./src/apps/auth.app");
 const usersApp = require("./src/apps/user.app");
-const messageApp = require('./src/apps/message.app');
-const jobApp = require('./src/apps/job.app')
+const chatApp = require("./src/apps/message.app");
+const jobsApp = require("./src/apps/jobs.app");
 
 // Exportar como funciones independientes
 exports.auth = functions.https.onRequest(authApp);
 exports.users = functions.https.onRequest(usersApp);
-exports.message = functions.https.onRequest(messageApp);
-exports.job = functions.https.onRequest(jobApp);
+exports.chat = functions.https.onRequest(chatApp);
+exports.jobs = functions.https.onRequest(jobsApp);
