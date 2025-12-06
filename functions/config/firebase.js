@@ -14,9 +14,9 @@ try {
     databaseURL: FIREBASE_DATABASE_URL,
   });
 
-  console.log("🔥 Firebase inicializado correctamente.");
+  console.log("Firebase inicializado correctamente.");
 } catch (error) {
-  console.error("❌ Error al inicializar Firebase:", error.message);
+  console.error("Error al inicializar Firebase:", error.message);
 }
 
 module.exports = admin;

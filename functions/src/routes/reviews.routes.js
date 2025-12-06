@@ -8,9 +8,7 @@ const authMiddleware = require("../middlewares/auth.middleware");
 const validate = require("../middlewares/validate.middleware");
 const {createReviewSchema, updateReviewSchema} = require("../schemas/reviews.validation");
 
-// ==========================================
-// RUTAS PÚBLICAS (sin autenticación)
-// ==========================================
+// RUTAS PÚBLICAS 
 
 // Obtener reseñas recibidas por un usuario
 router.get("/user/:userId", ReviewsController.getReviewsByUser);
@@ -24,9 +22,7 @@ router.get("/:reviewId", ReviewsController.getReviewById);
 // Obtener promedio de puntuación de un usuario
 router.get("/user/:userId/average", ReviewsController.getUserAverageScore);
 
-// ==========================================
-// RUTAS PROTEGIDAS (requieren autenticación)
-// ==========================================
+// RUTAS PROTEGIDAS
 
 // Crear nueva reseña
 router.post(

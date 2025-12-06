@@ -57,7 +57,6 @@ exports.login = async (req, res, next) => {
 
 /**
  * Devuelve el perfil del usuario autenticado.
- * Requiere auth middleware -> req.user.uid
  */
 exports.me = async (req, res, next) => {
   try {

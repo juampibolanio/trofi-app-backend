@@ -1,11 +1,6 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable camelcase */
 /* eslint-disable max-len */
-/*
- * UserService
- * - Servicio para operaciones sobre usuarios/trabajadores
- */
-
 const admin = require("../../config/firebase");
 const db = admin.database();
 
@@ -71,7 +66,7 @@ class UserService {
 
   /**
    * Obtiene perfil por email.
-   * Lanza ResourceNotFoundError si no existe usuario en Auth/RTDB.
+
    */
   async getUserProfileByEmail(email) {
     if (!email) throw new DataValidationError("El email es requerido.");
@@ -94,7 +89,6 @@ class UserService {
 
   /**
    * Obtiene perfil por UID.
-   * Lanza ResourceNotFoundError si no existe.
    */
   async getUserProfileByUid(uid) {
     if (!uid) throw new DataValidationError("UID requerido");
@@ -111,12 +105,10 @@ class UserService {
 
   /**
    * Actualiza perfil básico por UID.
-   * Asume que los campos pasaron validación en el schema Joi.
    */
   async updateProfileByUid(uid, data) {
     if (!uid) throw new DataValidationError("UID requerido");
 
-    // Construir objeto con campos permitidos; si un campo no se envía, queda fuera.
     const allowed = {
       dni: data.dni ?? undefined,
       userDescription: data.userDescription ?? undefined,
@@ -141,8 +133,7 @@ class UserService {
   }
 
   /**
-   * Agrega una foto (url) al array job_images usando transacción.
-   * Devuelve el objeto imagen recién insertado {id, url}.
+   * Agrega una foto (url) al array job_images
    */
   async uploadJobPhoto(uid, photoUrl) {
     if (!uid) throw new DataValidationError("UID no ingresado");
@@ -187,7 +178,6 @@ class UserService {
 
   /**
    * Elimina una foto por su id dentro de job_images.
-   * Retorna un objeto con mensaje de confirmación.
    */
   async deleteJobPhoto(uid, imageId) {
     if (!uid) throw new DataValidationError("UID requerido");
@@ -238,7 +228,7 @@ class UserService {
   }
 
   /**
-   * Actualiza perfil completo de worker (campos relacionados al rol de trabajador).
+   * Actualiza perfil completo de worker
    */
   async updateProfileWorker(uid, data) {
     if (!uid) throw new DataValidationError("UID requerido");
@@ -267,7 +257,7 @@ class UserService {
   }
 
   /**
-   * Retorna todos los trabajadores (array vacío si no hay)
+   * Retorna todos los trabajadores
    */
   async getAllWorkers() {
     try {
@@ -283,7 +273,6 @@ class UserService {
 
   /**
    * Busca trabajadores filtrando por nombre e id_job.
-   * Devuelve array vacío si no hay coincidencias.
    */
   async searchWorkers(search, id_job) {
     try {

@@ -7,7 +7,6 @@ const {httpStatusCodes} = require("../utils/httpStatusCodes");
 module.exports = (err, req, res, next) => {
   console.error("Ocurrió un error:", err.name, "-", err.message);
 
-  // Errores personalizados (BaseError y derivados)
   if (err instanceof BaseError) {
     return res.status(err.statusCode).json({
       success: false,
@@ -17,12 +16,11 @@ module.exports = (err, req, res, next) => {
     });
   }
 
-  // Errores inesperados
   return res.status(httpStatusCodes.internalServerError).json({
     success: false,
     message: "Error interno del servidor",
     data: null,
     timestamp: new Date().toISOString(),
-    details: err.message, // útil en desarrollo
+    details: err.message,
   });
 };

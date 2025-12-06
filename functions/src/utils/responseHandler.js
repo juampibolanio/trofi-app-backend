@@ -7,7 +7,6 @@ const {httpStatusCodes} = require("./httpStatusCodes");
 
 /**
  * Envía una respuesta exitosa o informativa en un formato estándar.
- * Todas las respuestas del backend deben pasar por aquí.
  */
 const sendResponse = (
     res,

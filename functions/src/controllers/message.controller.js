@@ -79,7 +79,7 @@ const sendMessage = async (req, res, next) => {
 };
 
 /**
- * Elimina un mensaje (solo el remitente)
+ * Elimina un mensaje
  */
 const deleteMessage = async (req, res, next) => {
   try {
@@ -98,7 +98,7 @@ const deleteMessage = async (req, res, next) => {
 };
 
 /**
- * Elimina un chat para el usuario (soft delete)
+ * Elimina un chat para el usuario
  */
 const deleteChat = async (req, res, next) => {
   try {

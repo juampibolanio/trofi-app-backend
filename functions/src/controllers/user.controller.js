@@ -5,9 +5,6 @@ const UserService = require("../services/user.service");
 const {sendResponse} = require("../utils/responseHandler");
 const {httpStatusCodes} = require("../utils/httpStatusCodes");
 const {updateUserSync, syncUser} = require("../services/analytics.service");
-/**
- * Controlador para manejo de usuarios y trabajadores.
- */
 
 /* ========================= REGISTRO ========================= */
 
@@ -54,7 +51,7 @@ exports.getProfileByUid = async (req, res, next) => {
 };
 
 /**
- * Devuelve el perfil del usuario autenticado (requiere middleware de auth).
+ * Devuelve el perfil del usuario autenticado
  */
 exports.getMe = async (req, res, next) => {
   try {
@@ -89,7 +86,7 @@ exports.updateProfile = async (req, res, next) => {
   }
 };
 
-/* ------- Actualizaciones simples (name, description, etc.) ------- */
+/* ------- Actualizaciones simples ------- */
 
 exports.updateName = async (req, res, next) => {
   try {
@@ -167,12 +164,7 @@ exports.updatePhone = async (req, res, next) => {
 
 exports.uploadJobPhoto = async (req, res, next) => {
   try {
-    console.log("📸 SUBIENDO FOTO - BODY:", req.body);
-    console.log("📸 SUBIENDO FOTO - UID:", req.params.uid);
-
     const newImage = await UserService.uploadJobPhoto(req.params.uid, req.body.photoUrl);
-
-    console.log("📸 FOTO INSERTADA EN RTDB:", newImage);
 
     return sendResponse(res, 201, {
       message: "Imagen subida correctamente",

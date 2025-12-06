@@ -14,10 +14,6 @@ const {
   updatePhoneSchema,
 } = require("../schemas/user.validation");
 
-/**
- * Rutas de usuarios y trabajadores.
- */
-
 /* =========================== PERFILES =========================== */
 
 // Obtener perfil por email o UID

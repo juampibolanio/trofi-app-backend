@@ -25,7 +25,7 @@ class MessageService {
     }
 
     try {
-      // Crear chatId consistente: los UIDs en orden alfabético
+      // Crear chatId
       const participants = [senderId, receiverId].sort();
       const chatId = `${participants[0]}_${participants[1]}`;
 
@@ -176,7 +176,7 @@ class MessageService {
         timestamp: value.timestamp,
       }));
 
-      // Ordenar por timestamp ascendente (más antiguos primero)
+      // Ordenar por timestamp ascendente
       messages.sort((a, b) => a.timestamp - b.timestamp);
 
       return messages;
@@ -310,7 +310,7 @@ class MessageService {
         throw new AuthorizationError("No tienes permiso para eliminar este chat");
       }
 
-      // Soft delete: marcar como eliminado para este usuario
+      // marcar como eliminado para este usuario
       await chatRef.child("deletedBy").update({
         [userId]: true,
       });

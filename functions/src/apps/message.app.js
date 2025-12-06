@@ -12,12 +12,6 @@ const messageRoutes = require("../routes/message.routes");
 
 app.use(messageRoutes);
 
-app.get("/test", (req, res) => {
-  res.json({
-    message: "La ruta test de mensajes funciona",
-  });
-});
-
 app.use(errorHandler);
 
 module.exports = app;

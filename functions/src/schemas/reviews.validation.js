@@ -1,14 +1,6 @@
 /* eslint-disable max-len */
-/**
- * Reviews Validation Schemas
- * - Esquemas de validación para reseñas usando Joi
- */
-
 const Joi = require("joi");
 
-/**
- * Schema para crear una nueva reseña
- */
 const createReviewSchema = Joi.object({
   reviewed_id: Joi.string().required().messages({
     "string.empty": "El ID del usuario a reseñar es requerido",
@@ -21,7 +13,6 @@ const createReviewSchema = Joi.object({
     "any.required": "La descripción es requerida",
   }),
   score: Joi.number().min(1).max(5).required().custom((value, helpers) => {
-    // Permitir solo incrementos de 0.5 (medias estrellas)
     if ((value * 2) % 1 !== 0) {
       return helpers.error("number.half");
     }
@@ -35,16 +26,12 @@ const createReviewSchema = Joi.object({
   }),
 });
 
-/**
- * Schema para actualizar una reseña
- */
 const updateReviewSchema = Joi.object({
   description: Joi.string().min(10).max(500).optional().messages({
     "string.min": "La descripción debe tener al menos 10 caracteres",
     "string.max": "La descripción no puede exceder 500 caracteres",
   }),
   score: Joi.number().min(1).max(5).optional().custom((value, helpers) => {
-    // Permitir solo incrementos de 0.5 (medias estrellas)
     if ((value * 2) % 1 !== 0) {
       return helpers.error("number.half");
     }

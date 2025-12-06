@@ -1,10 +1,5 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
-/**
- * Analytics Service
- * - Servicio para sincronizar datos con Django Analytics API
- */
-
 const axios = require("axios");
 
 const djangoUrl = process.env.DJANGO_API_URL || "http://127.0.0.1:8000/api";
@@ -17,11 +12,10 @@ const syncUser = async (userData) => {
     const response = await axios.post(`${djangoUrl}/sync/users/`, userData, {
       timeout: 5000,
     });
-    console.log("✅ Usuario sincronizado con Django:", userData.uid);
+    console.log("Usuario sincronizado con Django:", userData.uid);
     return response.data;
   } catch (error) {
-    console.error("❌ Error sincronizando usuario con Django:", error.message);
-    // No lanzamos error para que no afecte la operación principal
+    console.error("Error sincronizando usuario con Django:", error.message);
     return null;
   }
 };
@@ -34,10 +28,10 @@ const updateUserSync = async (uid, userData) => {
     const response = await axios.put(`${djangoUrl}/sync/users/${uid}/`, userData, {
       timeout: 5000,
     });
-    console.log("✅ Usuario actualizado en Django:", uid);
+    console.log("Usuario actualizado en Django:", uid);
     return response.data;
   } catch (error) {
-    console.error("❌ Error actualizando usuario en Django:", error.message);
+    console.error("Error actualizando usuario en Django:", error.message);
     return null;
   }
 };
@@ -51,10 +45,10 @@ const syncJob = async (jobData) => {
       firebase_key: jobData.id,
       name: jobData.name,
     });
-    console.log("✅ Oficio sincronizado con Django:", jobData.id);
+    console.log("Oficio sincronizado con Django:", jobData.id);
     return response.data;
   } catch (error) {
-    console.error("❌ Error sincronizando oficio con Django:", error.message);
+    console.error("Error sincronizando oficio con Django:", error.message);
     return null;
   }
 };
@@ -68,10 +62,10 @@ const updateJobSync = async (id, jobData) => {
       firebase_key: id,
       name: jobData.name,
     });
-    console.log("✅ Oficio actualizado en Django:", id);
+    console.log("Oficio actualizado en Django:", id);
     return response.data;
   } catch (error) {
-    console.error("❌ Error actualizando oficio en Django:", error.message);
+    console.error("Error actualizando oficio en Django:", error.message);
     return null;
   }
 };
@@ -84,10 +78,10 @@ const deleteJobSync = async (id) => {
     const response = await axios.delete(`${djangoUrl}/sync/jobs/${id}/`, {
       timeout: 5000,
     });
-    console.log("✅ Oficio eliminado en Django:", id);
+    console.log("Oficio eliminado en Django:", id);
     return response.data;
   } catch (error) {
-    console.error("❌ Error eliminando oficio en Django:", error.message);
+    console.error("Error eliminando oficio en Django:", error.message);
     return null;
   }
 };
@@ -100,10 +94,10 @@ const syncReview = async (reviewData) => {
     const response = await axios.post(`${djangoUrl}/sync/reviews/`, reviewData, {
       timeout: 5000,
     });
-    console.log("✅ Reseña sincronizada con Django:", reviewData.id);
+    console.log("Reseña sincronizada con Django:", reviewData.id);
     return response.data;
   } catch (error) {
-    console.error("❌ Error sincronizando reseña con Django:", error.message);
+    console.error("Error sincronizando reseña con Django:", error.message);
     return null;
   }
 };
@@ -116,10 +110,10 @@ const deleteReviewSync = async (id) => {
     const response = await axios.delete(`${djangoUrl}/sync/reviews/${id}/`, {
       timeout: 5000,
     });
-    console.log("✅ Reseña eliminada en Django:", id);
+    console.log("Reseña eliminada en Django:", id);
     return response.data;
   } catch (error) {
-    console.error("❌ Error eliminando reseña en Django:", error.message);
+    console.error("Error eliminando reseña en Django:", error.message);
     return null;
   }
 };
@@ -134,7 +128,7 @@ const getUsersStats = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error("❌ Error obteniendo estadísticas de usuarios:", error.message);
+    console.error("Error obteniendo estadísticas de usuarios:", error.message);
     throw error;
   }
 };
@@ -149,7 +143,7 @@ const getWorkersStats = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error("❌ Error obteniendo estadísticas de trabajadores:", error.message);
+    console.error("Error obteniendo estadísticas de trabajadores:", error.message);
     throw error;
   }
 };
@@ -164,7 +158,7 @@ const getReviewsStats = async () => {
     });
     return response.data;
   } catch (error) {
-    console.error("❌ Error obteniendo estadísticas de reseñas:", error.message);
+    console.error("Error obteniendo estadísticas de reseñas:", error.message);
     throw error;
   }
 };

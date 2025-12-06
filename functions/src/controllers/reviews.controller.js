@@ -6,9 +6,6 @@ const {syncReview, deleteReviewSync} = require("../services/analytics.service");
 
 /**
  * Crea una nueva reseña
- * POST /reviews
- * Body: { reviewed_id, description, score }
- * Requiere autenticación
  */
 exports.createReview = async (req, res, next) => {
   try {
@@ -43,7 +40,6 @@ exports.createReview = async (req, res, next) => {
 
 /**
  * Obtiene todas las reseñas recibidas por un usuario
- * GET /reviews/user/:userId
  */
 exports.getReviewsByUser = async (req, res, next) => {
   try {
@@ -66,7 +62,6 @@ exports.getReviewsByUser = async (req, res, next) => {
 
 /**
  * Obtiene todas las reseñas hechas por un usuario (reviewer)
- * GET /reviews/reviewer/:reviewerId
  */
 exports.getReviewsByReviewer = async (req, res, next) => {
   try {
@@ -89,7 +84,6 @@ exports.getReviewsByReviewer = async (req, res, next) => {
 
 /**
  * Obtiene una reseña específica por su ID
- * GET /reviews/:reviewId
  */
 exports.getReviewById = async (req, res, next) => {
   try {
@@ -108,9 +102,6 @@ exports.getReviewById = async (req, res, next) => {
 
 /**
  * Actualiza una reseña existente
- * PUT /reviews/:reviewId
- * Body: { description?, score? }
- * Requiere autenticación
  */
 exports.updateReview = async (req, res, next) => {
   try {
@@ -137,8 +128,6 @@ exports.updateReview = async (req, res, next) => {
 
 /**
  * Elimina una reseña existente
- * DELETE /reviews/:reviewId
- * Requiere autenticación
  */
 exports.deleteReview = async (req, res, next) => {
   try {
@@ -160,7 +149,6 @@ exports.deleteReview = async (req, res, next) => {
 
 /**
  * Obtiene el promedio de puntuación de un usuario
- * GET /reviews/user/:userId/average
  */
 exports.getUserAverageScore = async (req, res, next) => {
   try {

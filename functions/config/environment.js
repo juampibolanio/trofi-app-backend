@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 const envPath = path.resolve(__dirname, "../.env");
 dotenv.config({path: envPath});
 
-console.log("🌱 Variables de entorno cargadas desde:", envPath);
+console.log("Variables de entorno cargadas desde:", envPath);
 
 // Exportar variables en uso
 module.exports = {

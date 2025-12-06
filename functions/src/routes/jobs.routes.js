@@ -16,15 +16,15 @@ router.get("/", JobsController.getAllJobs);
 // Obtener un trabajo específico por ID
 router.get("/:id", JobsController.getJobById);
 
-// -------------------- RUTAS PROTEGIDAS (requieren autenticación) --------------------
+// -------------------- RUTAS PROTEGIDAS  --------------------
 
-// Crear un nuevo trabajo (requiere token y body válido)
+// Crear un nuevo trabajo
 router.post("/", authMiddleware, validate(createJobSchema), JobsController.createJob);
 
-// Actualizar un trabajo existente por ID (requiere token y body válido)
+// Actualizar un trabajo existente por ID 
 router.put("/:id", authMiddleware, validate(updateJobSchema), JobsController.updateJob);
 
-// Eliminar un trabajo por ID (requiere token)
+// Eliminar un trabajo por ID 
 router.delete("/:id", authMiddleware, JobsController.deleteJob);
 
 module.exports = router;

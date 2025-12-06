@@ -16,10 +16,10 @@ const {
 
 // -------------------- RUTAS PÚBLICAS --------------------
 
-// Registro de usuario con validación de datos
+// Registro de usuario 
 router.post("/register", validate(registerSchema), AuthController.register);
 
-// Login de usuario con validación de datos
+// Login de usuario
 router.post("/login", validate(loginSchema), AuthController.login);
 
 // -------------------- RUTAS PROTEGIDAS (requieren autenticación) --------------------
